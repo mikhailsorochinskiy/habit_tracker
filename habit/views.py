@@ -14,7 +14,7 @@ class CreateApiViewUsefulHabit(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         useful_habit = serializer.save()
-        useful_habit.user = self.request.user
+        useful_habit.owner = self.request.user
         useful_habit.save()
 
 class RetrieveApiViewUsefulHabit(generics.RetrieveAPIView):
