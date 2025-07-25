@@ -1,12 +1,14 @@
 from rest_framework import generics
 from .models import UsefulHabit, PleasantHabit
 from .serializers import UsefulHabitSerializer, PleasantHabitSerializer
+from .paginators import ListPagination
 
 
 """полезные привычки"""
 class ListApiViewUsefulHabit(generics.ListAPIView):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
+    pagination_class = ListPagination
 
 
 class CreateApiViewUsefulHabit(generics.CreateAPIView):
@@ -35,6 +37,7 @@ class DestroyApiViewUsefulHabit(generics.DestroyAPIView):
 class ListApiViewPleasantHabit(generics.ListAPIView):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
+    pagination_class = ListPagination
 
 
 class CreateApiViewPleasantHabit(generics.CreateAPIView):
