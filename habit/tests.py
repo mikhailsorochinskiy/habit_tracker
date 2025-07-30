@@ -4,6 +4,7 @@ from users.models import User
 from django.urls import reverse
 from rest_framework import status
 
+
 class UsefulHabitAPITestCase(APITestCase):
 
     def setUp(self):
@@ -44,7 +45,7 @@ class UsefulHabitAPITestCase(APITestCase):
 
     def test_create_with_award_and_pleasant(self):
         pleasant_habit = PleasantHabit.objects.create(owner=self.user, habit_time='12:00:00', action='test',
-                                                       time_to_complete=10)
+                                                      time_to_complete=10)
         url = reverse('habit:useful_habit_create')
         data = {
             "habit_time": "13:00:00",
@@ -103,7 +104,7 @@ class PleasantHabitAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(email='test@mail.ru')
         self.useful_habit = PleasantHabit.objects.create(owner=self.user, habit_time='12:00:00', action='test',
-                                                       time_to_complete=10)
+                                                         time_to_complete=10)
         self.client.force_authenticate(user=self.user)
 
     def test_get(self):

@@ -5,7 +5,6 @@ from .paginators import ListPagination
 from .permissions import IsOwner, IsAdmin
 
 
-"""полезные привычки"""
 class ListApiViewUsefulHabit(generics.ListAPIView):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
@@ -35,6 +34,7 @@ class CreateApiViewUsefulHabit(generics.CreateAPIView):
         useful_habit.owner = self.request.user
         useful_habit.save()
 
+
 class RetrieveApiViewUsefulHabit(generics.RetrieveAPIView):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
@@ -52,7 +52,6 @@ class DestroyApiViewUsefulHabit(generics.DestroyAPIView):
     permission_classes = [IsOwner | IsAdmin]
 
 
-"""приятные привычки"""
 class ListApiViewPleasantHabit(generics.ListAPIView):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
@@ -81,6 +80,7 @@ class CreateApiViewPleasantHabit(generics.CreateAPIView):
         useful_habit = serializer.save()
         useful_habit.user = self.request.user
         useful_habit.save()
+
 
 class RetrieveApiViewPleasantHabit(generics.RetrieveAPIView):
     serializer_class = PleasantHabitSerializer

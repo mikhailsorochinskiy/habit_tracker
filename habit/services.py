@@ -1,6 +1,7 @@
 import requests
 from config import settings
 
+
 def send_message_tg(text, chat_id):
     params = {
         'text': text,

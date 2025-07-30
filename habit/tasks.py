@@ -1,7 +1,6 @@
 from celery import shared_task
 from .services import send_message_tg
 from .models import UsefulHabit
-from django.utils import timezone
 
 
 @shared_task
