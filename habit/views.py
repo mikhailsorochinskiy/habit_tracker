@@ -3,6 +3,7 @@ from .models import UsefulHabit, PleasantHabit
 from .serializers import UsefulHabitSerializer, PleasantHabitSerializer
 from .paginators import ListPagination
 from .permissions import IsOwner, IsAdmin
+from rest_framework.permissions import IsAuthenticated
 
 
 class ListApiViewUsefulHabit(generics.ListAPIView):
@@ -20,7 +21,7 @@ class OwnerListApiViewUsefulHabit(generics.ListAPIView):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ListPagination
-    permission_classes = [IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
         return UsefulHabit.objects.filter(owner=self.request.user)
@@ -38,18 +39,18 @@ class CreateApiViewUsefulHabit(generics.CreateAPIView):
 class RetrieveApiViewUsefulHabit(generics.RetrieveAPIView):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
-    permission_classes = [IsOwner | IsAdmin]
+    permission_classes = [IsAuthenticated, IsOwner | IsAdmin]
 
 
 class UpdateApiViewUsefulHabit(generics.UpdateAPIView):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
-    permission_classes = [IsOwner | IsAdmin]
+    permission_classes = [IsAuthenticated, IsOwner | IsAdmin]
 
 
 class DestroyApiViewUsefulHabit(generics.DestroyAPIView):
     queryset = UsefulHabit.objects.all()
-    permission_classes = [IsOwner | IsAdmin]
+    permission_classes = [IsAuthenticated, IsOwner | IsAdmin]
 
 
 class ListApiViewPleasantHabit(generics.ListAPIView):
@@ -67,7 +68,7 @@ class OwnerListApiViewPleasantHabit(generics.ListAPIView):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
     pagination_class = ListPagination
-    permission_classes = [IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
         return PleasantHabit.objects.filter(owner=self.request.user)
@@ -78,22 +79,22 @@ class CreateApiViewPleasantHabit(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         useful_habit = serializer.save()
-        useful_habit.user = self.request.user
+        useful_habit.owner = self.request.user
         useful_habit.save()
 
 
 class RetrieveApiViewPleasantHabit(generics.RetrieveAPIView):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
-    permission_classes = [IsOwner | IsAdmin]
+    permission_classes = [IsAuthenticated, IsOwner | IsAdmin]
 
 
 class UpdateApiViewPleasantHabit(generics.UpdateAPIView):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
-    permission_classes = [IsOwner | IsAdmin]
+    permission_classes = [IsAuthenticated, IsOwner | IsAdmin]
 
 
 class DestroyApiViewPleasantHabit(generics.DestroyAPIView):
     queryset = PleasantHabit.objects.all()
-    permission_classes = [IsOwner | IsAdmin]
+    permission_classes = [IsAuthenticated, IsOwner | IsAdmin]
