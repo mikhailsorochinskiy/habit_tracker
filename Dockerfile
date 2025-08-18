@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.13-slim AS python-app
 
 WORKDIR /app
 
@@ -15,3 +15,22 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-root
 
 COPY . .
+
+# Собираем статику на этапе build
+RUN python manage.py collectstatic --noinput
+
+FROM nginx:latest AS nginx
+
+# Удаляем дефолтную конфигурацию
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Копируем только конфиг Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Копируем статику из python-образа
+COPY --from=python-app /app/staticfiles /usr/share/nginx/static
+
+# Копируем HTML файлы
+COPY html/ /usr/share/nginx/html/
+
+EXPOSE 80

@@ -23,12 +23,13 @@ services:
       - ./.env
 
   web:
-    build: .
+    build:
+      context: .
+      target: python-app
     command: >
-      sh -c "python manage.py collectstatic -c --noinput && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
-      - static_volume:/app/staticfiles
     ports:
       - "8000:8000"
     depends_on:
@@ -41,19 +42,45 @@ services:
 
   nginx:
     build:
-      context: ./nginx
+      context: .
+      target: nginx
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - static_volume:/app/staticfiles
+      - ./nginx.conf:/etc/nginx/nginx.conf
       - ./html:/usr/share/nginx/html
     depends_on:
       - web
 
+  celery:
+    build:
+      context: .
+      target: python-app
+    command: >
+      bash -c "python -m celery -A config worker --loglevel=info --pool=solo"
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - db
 
+  celery-beat:
+    build:
+      context: .
+      target: python-app
+    command: >
+      bash -c "python -m celery -A config beat -l info"
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - db
+      - celery
 
 volumes:
   postgres_data:
   redis_data:
-  static_volume:
