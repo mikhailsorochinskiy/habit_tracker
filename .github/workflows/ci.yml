@@ -104,7 +104,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
             -t ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }} .
 
       - name: Push Docker image to Docker Hub
