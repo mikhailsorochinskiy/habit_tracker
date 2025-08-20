@@ -34,4 +34,4 @@ jobs:
 
       - name: Run PEP8 compliance check
         run: |
-          flake8 .
+          poetry run flake8 .
