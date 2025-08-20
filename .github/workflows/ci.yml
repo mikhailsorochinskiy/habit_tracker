@@ -25,23 +25,24 @@ jobs:
           python-version: '3.13'
 
       - name: Install Poetry
-        run: |
-          pip install poetry
+        run: pip install poetry
+
+      - name: Get Poetry cache path
+        id: poetry-cache
+        run: echo "path=$(poetry config cache-dir)/virtualenvs" >> $GITHUB_OUTPUT
 
       - name: Cache Poetry virtualenv
         uses: actions/cache@v3
         id: cache-venv
         with:
-          path: .venv
+          path: ${{ steps.poetry-cache.outputs.path }}
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
         run: poetry install --no-root
-        if: steps.cache-venv.outputs.cache-hit != 'true'
 
       - name: Run PEP8 compliance check
-        run: |
-          poetry run flake8 .
+        run: poetry run flake8 .
 
   test:
     runs-on: ubuntu-latest
@@ -67,23 +68,24 @@ jobs:
           python-version: '3.13'
 
       - name: Install Poetry
-        run: |
-          pip install poetry
-          poetry config virtualenvs.create false
+        run: pip install poetry
+
+      - name: Get Poetry cache path
+        id: poetry-cache-test
+        run: echo "path=$(poetry config cache-dir)/virtualenvs" >> $GITHUB_OUTPUT
 
       - name: Cache Poetry virtualenv
         uses: actions/cache@v3
         id: cache-venv-test
         with:
-          path: .venv
+          path: ${{ steps.poetry-cache-test.outputs.path }}
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
         run: poetry install --no-root
-        if: steps.cache-venv-test.outputs.cache-hit != 'true'
-          
+
       - name: Run migrate
-        run: python manage.py migrate
+        run: poetry run python manage.py migrate
 
       - name: Run test
-        run: python manage.py test
+        run: poetry run python manage.py test
