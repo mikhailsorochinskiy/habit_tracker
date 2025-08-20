@@ -65,6 +65,6 @@ jobs:
           poetry install --no-root
           
       - name: Run migrate
-#        env:
-#          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
         run: python manage.py migrate
