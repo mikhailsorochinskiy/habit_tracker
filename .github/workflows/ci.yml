@@ -102,6 +102,8 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           docker build \
             --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
