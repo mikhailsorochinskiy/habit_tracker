@@ -69,3 +69,6 @@ jobs:
 #        env:
 #          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
         run: python manage.py migrate
+
+      - name: Run test
+        run: python manage.py test
