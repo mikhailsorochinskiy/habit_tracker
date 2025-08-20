@@ -67,7 +67,9 @@ jobs:
           python-version: '3.13'
 
       - name: Install Poetry
-        run: pip install poetry
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
 
       - name: Cache Poetry virtualenv
         uses: actions/cache@v3
