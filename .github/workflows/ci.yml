@@ -144,8 +144,27 @@ jobs:
             sudo git reset --hard origin/feature/kursach_docker
             sudo git pull origin feature/kursach_docker
           
-            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
-            sudo docker stop habit_tracker-web || true
-            sudo docker rm habit_tracker-web || true
-            sudo docker run -d --name habit_tracker-web -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
+            # Останавливаем и удаляем старый контейнер
+            docker stop habit_tracker-web || true
+            docker rm habit_tracker-web || true
+          
+            # Pull нового образа
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
+          
+            # Запускаем новый контейнер с переменными окружения
+            docker run -d \
+              --name habit_tracker-web \
+              -p 80:8000 \
+#              -e SECRET_KEY='${{ secrets.SECRET_KEY }}' \
+#              -e POSTGRES_DB='${{ secrets.POSTGRES_DB }}' \
+#              -e POSTGRES_USER='${{ secrets.POSTGRES_USER }}' \
+#              -e POSTGRES_PASSWORD='${{ secrets.POSTGRES_PASSWORD }}' \
+#              -e POSTGRES_HOST='${{ secrets.POSTGRES_HOST }}' \
+#              -e POSTGRES_PORT='${{ secrets.POSTGRES_PORT }}' \
+#              -e DJANGO_SETTINGS_MODULE='config.settings' \
+              ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
+          
+            # Проверяем статус
+            echo "Deployment completed!"
+            docker ps -a | grep habit_tracker-web
           EOF
