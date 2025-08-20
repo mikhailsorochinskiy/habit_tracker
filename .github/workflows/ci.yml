@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   DJANGO_SETTINGS_MODULE: config.settings
-  SECRET_KEY: ${{ SECRET_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
