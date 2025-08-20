@@ -119,3 +119,33 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            sudo mkdir -p ${{ secrets.DEPLOY_DIR }}
+            cd ${{ secrets.DEPLOY_DIR }}
+          
+            if [ ! -d .git ]; then
+              sudo git clone --branch feature/kursach_docker https://github.com/Arty525/healthy-habits-tracker.git .
+            fi
+          
+            sudo git fetch origin feature/kursach_docker
+            sudo git reset --hard origin/feature/kursach_docker
+            sudo git pull origin feature/kursach_docker
+          
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
+            sudo docker stop habit_tracker-web || true
+            sudo docker rm habit_tracker-web || true
+            sudo docker run -d --name habit_tracker-web -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
+          EOF
