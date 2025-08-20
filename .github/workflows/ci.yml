@@ -151,13 +151,10 @@ jobs:
             # Pull нового образа
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
           
-            # Запускаем новый контейнер с переменными окружения
-            docker run -d \
-              --name habit_tracker-web \
-              -p 80:8000 \
-              ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
-          
-            # Проверяем статус
+            # Запускаем через docker-compose
+            docker-compose down
+            docker-compose up -d
+            
             echo "Deployment completed!"
-            docker ps -a | grep habit_tracker-web
+            docker-compose ps
           EOF
