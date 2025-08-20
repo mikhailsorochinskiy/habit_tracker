@@ -17,7 +17,9 @@ RUN poetry install --no-root
 COPY . .
 
 # Собираем статику на этапе build
-RUN python manage.py collectstatic --noinput
+RUN --mount=type=secret,id=env,target=/tmp/.env \
+    export $(cat /tmp/.env | xargs) && \
+    python manage.py collectstatic --noinput
 
 FROM nginx:latest AS nginx
 

@@ -102,12 +102,20 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
+          # Создаем временный .env файл
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env.tmp
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.tmp
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.tmp
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.tmp
+
+          # Собираем с использованием .env файла
           docker build \
-            --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+            --secret id=env,src=.env.tmp \
             -t ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }} .
+
+          # Удаляем временный файл
+          rm .env.tmp
 
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/habit_tracker-web:${{ github.sha }}
